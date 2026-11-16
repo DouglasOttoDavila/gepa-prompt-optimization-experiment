@@ -1,0 +1,2 @@
+# Preserve the byte-for-byte hash recorded by the benchmark.
+fixtures/stories.json -text

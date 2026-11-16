@@ -1,0 +1,257 @@
+[
+  {
+    "id": "TR-01",
+    "split": "train",
+    "title": "Return label before handoff",
+    "story": "As a warehouse associate, I want to print a return label for an open return.",
+    "policy": "Rules: Only open returns are eligible. Exactly two items can share a return label. After printing, move the return to Label Printed.",
+    "acceptance": "AC: Open returns expose Print Label. Printing generates a label and moves the return to Label Printed.",
+    "gaps": [
+      "boundary"
+    ]
+  },
+  {
+    "id": "TR-02",
+    "split": "train",
+    "title": "Reopen a delivery exception",
+    "story": "As a dispatcher, I want to reopen a delivery exception when the driver provides new evidence.",
+    "policy": "Rules: Only dispatch supervisors can reopen exceptions. Reopening must write actor, previous state and reason to the activity log. Move to Investigating on success.",
+    "acceptance": "AC: Supervisors can reopen exceptions. A successful reopen moves the case to Investigating. The activity log records who reopened it, the old state and the entered reason.",
+    "gaps": []
+  },
+  {
+    "id": "TR-03",
+    "split": "train",
+    "title": "Retry a quote export",
+    "story": "As a reseller, I want to retry an export when the spreadsheet service is temporarily unavailable.",
+    "policy": "Rules: Retrying with the same export key must return the existing export job. A terminal permission error is ineligible for retry. After successful retry set status to Queued.",
+    "acceptance": "AC: On a temporary failure, the Retry option starts a new export job every time. Permission errors hide Retry.",
+    "gaps": [
+      "idempotency",
+      "transition"
+    ]
+  },
+  {
+    "id": "TR-04",
+    "split": "train",
+    "title": "Enable a pickup window",
+    "story": "As a store coordinator, I want an evening pickup window for verified orders.",
+    "policy": "Rules: Verified orders are eligible. The evening window ends at 19:00 local store time, inclusive. The customer-facing view shows the local end time.",
+    "acceptance": "AC: For verified orders the correct evening cutoff should apply and the pickup page shows the end time in store time.",
+    "gaps": [
+      "boundary"
+    ]
+  },
+  {
+    "id": "TR-05",
+    "split": "train",
+    "title": "Correct a shipment reference",
+    "story": "As a support lead, I want to correct a carrier's incorrect tracking reference.",
+    "policy": "Rules: Only support leads can edit this value. A closed shipment is ineligible. Log actor, old value and new value.",
+    "acceptance": "AC: A support lead can change the reference only for a shipment that remains open. Each accepted edit writes the authenticated staff member, replaced reference and resulting reference to history.",
+    "gaps": []
+  },
+  {
+    "id": "TR-06",
+    "split": "train",
+    "title": "Send the customer a packing slip",
+    "story": "As a shipping coordinator, I want to send one packing slip per shipment.",
+    "policy": "Rules: The slip displays carrier and tracking number, and omits the internal cost center. A repeated request with the same shipment and message type must not send a second email.",
+    "acceptance": "AC: When I send the packing slip, the email displays carrier and tracking number. The same shipment and message type produce only one email even if Send is used twice.",
+    "gaps": [
+      "display"
+    ]
+  },
+  {
+    "id": "TR-07",
+    "split": "train",
+    "title": "Publish a freight estimate",
+    "story": "As a reseller, I want to publish a freight estimate after finance approves it.",
+    "policy": "Rules: Approved estimates may publish. Publication moves Approved to Published. The customer sees the subtotal and currency.",
+    "acceptance": "AC: Approved estimates can publish. The customer sees the subtotal and currency after publication. The edit screen remains in Approved state after publication.",
+    "gaps": [
+      "transition"
+    ]
+  },
+  {
+    "id": "TR-08",
+    "split": "train",
+    "title": "Override a reservation",
+    "story": "As a supervisor, I want to extend a reservation to accommodate a delayed pickup.",
+    "policy": "Rules: Only shift supervisors may override. An override must be recorded with actor and reason.",
+    "acceptance": "AC: Staff can override in the reservation screen. Operations has adequate visibility of changes.",
+    "gaps": [
+      "authorization",
+      "audit"
+    ]
+  },
+  {
+    "id": "TR-09",
+    "split": "train",
+    "title": "Service plan renewal",
+    "story": "As an account owner, I want a way to renew my eligible service plan.",
+    "policy": "Rules: Plans may renew for 30 days after expiry, inclusive. The renewal action advances the plan to Active. Confirm the renewed expiry to the user.",
+    "acceptance": "AC: A plan on day 30 after expiry offers Renew, and a plan on day 31 does not. On success, status is Active and the page shows the resulting expiry date.",
+    "gaps": []
+  },
+  {
+    "id": "TR-10",
+    "split": "train",
+    "title": "Book loading bay",
+    "story": "As a site coordinator, I want to reserve a loading bay for an inbound vehicle.",
+    "policy": "Rules: Bookings are limited to carriers with approved site access. Each request key has at most one active reservation. The confirmation shows bay and start time.",
+    "acceptance": "AC: Approved carriers can book and unapproved carriers get a refusal. The confirmation shows the bay and when loading starts.",
+    "gaps": [
+      "idempotency"
+    ]
+  },
+  {
+    "id": "TR-11",
+    "split": "train",
+    "title": "Queue backordered parts",
+    "story": "As a fulfillment lead, I want to queue backordered parts for transfer.",
+    "policy": "Rules: Only backordered parts are eligible. Requests for zero units must be rejected; one unit is allowed. Show confirmed quantity after submission.",
+    "acceptance": "AC: Backordered parts can be queued. Submitting one unit succeeds and submitting zero is rejected.",
+    "gaps": [
+      "display"
+    ]
+  },
+  {
+    "id": "TR-12",
+    "split": "train",
+    "title": "Close a routing exception",
+    "story": "As a route manager, I want to close a routing exception without losing the review trail.",
+    "policy": "Rules: Only route managers can close. Status must become Closed. Store actor, timestamp and reason.",
+    "acceptance": "AC: A route manager can close an exception and its status becomes Closed. History shows the manager and time of the action.",
+    "gaps": [
+      "audit"
+    ]
+  },
+  {
+    "id": "VA-01",
+    "split": "validation",
+    "title": "Save a quote draft",
+    "story": "As a reseller, I want to save an unfinished quote so I can return later.",
+    "policy": "Rules: Drafts expire after 14 days; opening on day 14 remains valid. After save show the draft ID. A duplicate save with the same request ID must return the original draft ID.",
+    "acceptance": "AC: Opening the same draft on day 14 succeeds and day 15 is rejected. The successful save displays the draft ID. A second Save with the same request ID creates a fresh identifier.",
+    "gaps": [
+      "idempotency"
+    ]
+  },
+  {
+    "id": "VA-02",
+    "split": "validation",
+    "title": "Submit tax exemption",
+    "story": "As a finance analyst, I want to approve a verified tax-exemption request.",
+    "policy": "Rules: Only the finance reviewer role can approve verified submissions. Approval moves Verified to Approved; log approver and decision reason.",
+    "acceptance": "AC: A verified request moves to Approved when a finance reviewer approves it. The log identifies the reviewer and records the approval reason.",
+    "gaps": []
+  },
+  {
+    "id": "VA-03",
+    "split": "validation",
+    "title": "Request a pallet pickup",
+    "story": "As a partner, I want to schedule pickup for a packed pallet.",
+    "policy": "Rules: Only packed pallets are eligible. Pickups accept 1 through 8 pallets per booking, inclusive. Show pickup confirmation number.",
+    "acceptance": "AC: I can schedule any prepared shipment. The booking limit is handled normally. On success the confirmation screen shows a pickup number.",
+    "gaps": [
+      "eligibility",
+      "boundary"
+    ]
+  },
+  {
+    "id": "VA-04",
+    "split": "validation",
+    "title": "Reissue confirmation email",
+    "story": "As an account representative, I want to reissue a confirmation email for an active order.",
+    "policy": "Rules: Only active orders qualify. Log the actor and order reference. Show the masked recipient address after reissue.",
+    "acceptance": "AC: An active order offers Reissue. A canceled order does not. The activity log shows the staff member and order reference. The confirmation page is updated.",
+    "gaps": [
+      "display"
+    ]
+  },
+  {
+    "id": "TE-01",
+    "split": "test",
+    "title": "Reprice an expired service quote",
+    "story": "As a reseller specialist, I want to reprice a quote that has expired so the customer can place the order under current terms.",
+    "policy": "Rules: Quotes may be repriced through calendar day 7 after expiration; day 8 must be rejected. Only partner pricing specialists can request repricing. The old quote remains Expired and the new quote starts in Draft.",
+    "acceptance": "AC: When a partner pricing specialist selects Reprice on an expired quote, the flow proceeds if the quote is still within the grace period. The old quote stays Expired and the new quote appears as Draft.",
+    "gaps": [
+      "boundary"
+    ]
+  },
+  {
+    "id": "TE-02",
+    "split": "test",
+    "title": "Cancel a reserved dispatch",
+    "story": "As a scheduling lead, I want to cancel a dispatch reservation and show who made the change.",
+    "policy": "Rules: Scheduling leads may cancel a Reserved dispatch. Cancellation changes Reserved to Canceled. History must contain actor, old status and reason.",
+    "acceptance": "AC: A scheduling lead can cancel a dispatch in Reserved status. It changes to Canceled. History lists their signed-in identity, Reserved as the previous value, and the reason they supplied.",
+    "gaps": []
+  },
+  {
+    "id": "TE-03",
+    "split": "test",
+    "title": "Resubmit support registration",
+    "story": "As a partner, I want to retry equipment registration if my browser loses the confirmation.",
+    "policy": "Rules: With a repeated request key, return the existing registration ID and create no new record. Only equipment with a validated serial is eligible. Show the registration ID and omit the internal validation notes.",
+    "acceptance": "AC: A valid serial is required before Submit activates. On success the confirmation shows the registration ID and the internal validation notes. If confirmation is lost, the user can submit again.",
+    "gaps": [
+      "display",
+      "idempotency"
+    ]
+  },
+  {
+    "id": "TE-04",
+    "split": "test",
+    "title": "Extend depot reservation",
+    "story": "As a depot supervisor, I want to extend a pickup reservation by up to 48 hours.",
+    "policy": "Rules: Only depot supervisors can extend a reservation. The maximum is 48 hours inclusive. Audit the actor, old expiry and new expiry.",
+    "acceptance": "AC: A depot supervisor can extend by exactly 48 hours. A 49-hour extension is rejected. The reservation history shows the supervisor and the previous and updated expiry values.",
+    "gaps": []
+  },
+  {
+    "id": "TE-05",
+    "split": "test",
+    "title": "Reopen return after inspection",
+    "story": "As a returns coordinator, I want to reopen an inspected return so discrepancies can be reviewed.",
+    "policy": "Rules: Only inspected returns are eligible. After reopening status becomes Under Review. The audit record must include actor, previous status and reason.",
+    "acceptance": "AC: Reopen is available only on inspected returns. After reopening the entry remains Inspected until the next scheduled sync. The activity history records that the return was reopened.",
+    "gaps": [
+      "audit",
+      "transition"
+    ]
+  },
+  {
+    "id": "TE-06",
+    "split": "test",
+    "title": "Create split shipment",
+    "story": "As a fulfillment analyst, I want to split a shipment between two depots.",
+    "policy": "Rules: Only allocated shipments may be split. An identical split key must return both existing shipment IDs. The confirmation displays both shipment IDs and depot names.",
+    "acceptance": "AC: The Split action is available for shipments marked Ready, even without allocation. For a repeated key, the response returns the same two IDs without creating shipments. The confirmation shows each shipment ID beside its depot name.",
+    "gaps": [
+      "eligibility"
+    ]
+  },
+  {
+    "id": "TE-07",
+    "split": "test",
+    "title": "Reassign installer",
+    "story": "As a regional lead, I want to reassign an installer when staffing changes.",
+    "policy": "Rules: Only regional leads may reassign. The portal displays the replacement installer and effective date after save. The activity log captures actor and previous installer.",
+    "acceptance": "AC: A regional lead can reassign. After save, the old installer is replaced in the portal with the selected installer and the scheduled effective date. History records the signed-in lead and the installer replaced.",
+    "gaps": []
+  },
+  {
+    "id": "TE-08",
+    "split": "test",
+    "title": "Start a bulk carrier export",
+    "story": "As a transport coordinator, I want to export up to 50 consignments from a closed route.",
+    "policy": "Rules: Only closed routes are eligible. Exactly 50 consignments are allowed; 51 must be rejected. Only carrier coordinators are authorized. The confirmation displays the request ID.",
+    "acceptance": "AC: A carrier coordinator exporting a closed route with 50 consignments sees a confirmation containing a request ID. Reject exports for open routes. For more than 50 consignments on a closed route, display a confirmation with a warning banner and submit the export.",
+    "gaps": [
+      "boundary"
+    ]
+  }
+]

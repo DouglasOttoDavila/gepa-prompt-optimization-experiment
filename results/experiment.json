@@ -1,0 +1,473 @@
+{
+  "versions": {
+    "dspy": "3.5.0",
+    "gepa": "0.1.4"
+  },
+  "model": "openai/qwen3.5-4b-q4-k-m",
+  "fixture_counts": {
+    "train": 12,
+    "validation": 4,
+    "test": 8
+  },
+  "fixture_sha256": "c6b9bce543e0126992455c6a767b3962aa82bcbd8f6eb804bd863623d8ef8978",
+  "optimization_seconds": 79.531,
+  "optimization": {
+    "candidates": [
+      {
+        "review": "Review the acceptance criteria against the supplied policy. Return the category IDs for policy requirements that the criteria omit, leave untestable, or contradict. Use only the supplied policy and taxonomy. Accept equivalent wording. Return an empty list when there is no gap."
+      },
+      {
+        "review": "Review the acceptance criteria against the supplied policy. Return the category IDs for policy requirements that the criteria omit, leave untestable, or contradict. Use only the supplied policy and taxonomy. Accept equivalent wording. Return an empty list when there is no gap.\n\n**Taxonomy Definitions**:\n- `eligibility`: Required object or request precondition.\n- `boundary`: Exact limit, cutoff, threshold, or inclusivity.\n- `authorization`: Who is permitted to act.\n- `transition`: Required state after an action.\n- `idempotency`: Outcome of repeating a request with the same key.\n- `audit`: What fields or events history must record.\n- `display`: What users must see or what the interface must omit.\n\n**Review Process**:\n1. Compare each explicit policy clause (Rules) with the acceptance criteria (AC).\n2. Identify gaps where the AC fails to capture:\n   - Specific constraints on side effects.\n   - Required fields for history or audit logs.\n   - Allowed states or transitions after an action.\n   - Exact thresholds, limits, or cutoffs.\n3. Map these gaps to the taxonomy categories.\n4. Return the list of category IDs representing the missing requirements.\n\n**Examples of Gap Identification**:\n- If the policy states \"Only route managers can close\" but the AC only says \"A route manager can close,\" flag `authorization`.\n- If the policy states \"Status must become Closed\" but the AC omits this, flag `transition`.\n- If the policy states \"Store actor, timestamp, and reason\" but the AC only mentions \"History shows the manager and time,\" flag `audit`.\n- If the policy states \"Plans may renew for 30 days after expiry, inclusive\" but the AC only mentions \"day 30\" without specifying \"inclusive,\" flag `boundary`.\n\n**Important Notes**:\n- Do not infer requirements not explicitly stated in the policy.\n- Accept equivalent wording in the AC if it clearly conveys the same requirement.\n- If no gaps are found after a thorough comparison, return an empty list."
+      },
+      {
+        "review": "Review the acceptance criteria against the supplied policy. Return the category IDs for policy requirements that the criteria omit, leave untestable, or contradict. Use only the supplied policy and taxonomy. Accept equivalent wording. Return an empty list when there is no gap.\n\n**Taxonomy Definitions**:\n- `eligibility`: Required object or request precondition.\n- `boundary`: Exact limit, cutoff, threshold, or inclusivity.\n- `authorization`: Who is permitted to act.\n- `transition`: Required state after an action.\n- `idempotency`: Outcome of repeating a request with the same key.\n- `audit`: What fields or events history must record.\n- `display`: What users must see or what the interface must omit.\n\n**Review Process**:\n1. Compare each explicit policy clause (Rules) with the acceptance criteria (AC).\n2. Identify gaps where the AC fails to capture:\n   - Specific constraints on side effects.\n   - Required fields for history or audit logs.\n   - Allowed states or transitions after an action.\n   - Exact thresholds, limits, or cutoffs.\n3. Map these gaps to the taxonomy categories.\n4. Return the list of category IDs representing the missing requirements.\n\n**Important Notes**:\n- Do not infer requirements not explicitly stated in the policy.\n- Accept equivalent wording in the AC if it clearly conveys the same requirement.\n- If no gaps are found after a thorough comparison, return an empty list.\n- Pay close attention to constraints on side effects, required fields for history, allowed states after actions, and exact thresholds or limits. For example, if the policy states \"After printing, move the return to Label Printed\" but the AC only mentions \"moves the return to Label Printed\" without specifying the exact state name or transition condition, flag `transition`. Similarly, if the policy specifies \"Exactly two items\" but the AC only says \"two items,\" flag `boundary`."
+      },
+      {
+        "review": "Review the acceptance criteria against the supplied policy. Return the category IDs for policy requirements that the criteria omit, leave untestable, or contradict. Use only the supplied policy and taxonomy. Accept equivalent wording. Return an empty list when there is no gap.\n\n**Taxonomy Definitions**:\n- `eligibility`: Required object or request precondition.\n- `boundary`: Exact limit, cutoff, threshold, or inclusivity.\n- `authorization`: Who is permitted to act.\n- `transition`: Required state after an action.\n- `idempotency`: Outcome of repeating a request with the same key.\n- `audit`: What fields or events history must record.\n- `display`: What users must see or what the interface must omit.\n\n**Review Process**:\n1. Compare each explicit policy clause (Rules) with the acceptance criteria (AC).\n2. Identify gaps where the AC fails to capture:\n   - Specific constraints on side effects.\n   - Required fields for history or audit logs.\n   - Allowed states or transitions after an action.\n   - Exact thresholds, limits, or cutoffs.\n3. Map these gaps to the taxonomy categories.\n4. Return the list of category IDs representing the missing requirements.\n\n**Important Notes**:\n- Do not infer requirements not explicitly stated in the policy.\n- Accept equivalent wording in the AC if it clearly conveys the same requirement.\n- If no gaps are found after a thorough comparison, return an empty list.\n- Pay close attention to constraints on side effects, required fields for history, allowed states after actions, and exact thresholds or limits. For example, if the policy states \"After printing, move the return to Label Printed\" but the AC only mentions \"moves the return to Label Printed\" without specifying the exact state name or transition condition, flag `transition`. Similarly, if the policy specifies \"Exactly two items\" but the AC only says \"two items,\" flag `boundary`.\n\n**Critical Factual Constraints**:\n- When evaluating `authorization`, strictly check if the AC specifies the exact role or permission required (e.g., \"Only route managers\" vs \"Staff\"). If the AC uses a broader term like \"Staff\" when the policy requires \"Route managers,\" this is a gap in authorization.\n- When evaluating `transition`, the AC must explicitly state the resulting state name (e.g., \"Status must become Closed\"). If it only describes the action without the specific state name, flag `transition`.\n- When evaluating `audit`, the AC must list the specific fields required in the history (e.g., \"actor, timestamp and reason\"). If it mentions \"history shows the manager and time\" but omits \"reason,\" flag `audit`.\n- When evaluating `display`, the AC must specify what is shown or omitted (e.g., \"omits the internal cost center\"). If it only mentions what is displayed without mentioning what is omitted, flag `display`.\n- Do not flag `authorization` or `transition` if the AC correctly identifies the specific role or state name, even if the wording is slightly different, provided the meaning is equivalent.\n- Do not flag `audit` if the AC mentions specific fields that match the policy requirements, even if the phrasing is slightly different.\n- Do not flag `display` if the AC mentions both what is shown and what is omitted, even if the phrasing is slightly different.\n- Ensure that the comparison is strict on the specific requirements (role names, state names, field names) while accepting equivalent phrasing for the general concept."
+      },
+      {
+        "review": "Review the acceptance criteria against the supplied policy. Return the category IDs for policy requirements that the criteria omit, leave untestable, or contradict. Use only the supplied policy and taxonomy. Accept equivalent wording. Return an empty list when there is no gap.\n\n**Taxonomy Definitions**:\n- `eligibility`: Required object or request precondition.\n- `boundary`: Exact limit, cutoff, threshold, or inclusivity.\n- `authorization`: Who is permitted to act.\n- `transition`: Required state after an action.\n- `idempotency`: Outcome of repeating a request with the same key.\n- `audit`: What fields or events history must record.\n- `display`: What users must see or what the interface must omit.\n\n**Review Process**:\n1. Compare each explicit policy clause (Rules) with the acceptance criteria (AC).\n2. Identify gaps where the AC fails to capture:\n   - Specific constraints on side effects.\n   - Required fields for history or audit logs.\n   - Allowed states or transitions after an action.\n   - Exact thresholds, limits, or cutoffs.\n3. Map these gaps to the taxonomy categories.\n4. Return the list of category IDs representing the missing requirements.\n\n**Important Notes**:\n- Do not infer requirements not explicitly stated in the policy.\n- Accept equivalent wording in the AC if it clearly conveys the same requirement.\n- If no gaps are found after a thorough comparison, return an empty list.\n- Pay close attention to constraints on side effects, required fields for history, allowed states after actions, and exact thresholds or limits. For example, if the policy states \"After printing, move the return to Label Printed\" but the AC only mentions \"moves the return to Label Printed\" without specifying the exact state name or transition condition, flag `transition`. Similarly, if the policy specifies \"Exactly two items\" but the AC only says \"two items,\" flag `boundary`.\n\n**Critical Factual Constraints**:\n- When evaluating `authorization`, strictly check if the AC specifies the exact role or permission required (e.g., \"Only route managers\" vs \"Staff\"). If the AC uses a broader term like \"Staff\" when the policy requires \"Route managers,\" this is a gap in authorization.\n- When evaluating `transition`, the AC must explicitly state the resulting state name (e.g., \"Status must become Closed\"). If it only describes the action without the specific state name, flag `transition`.\n- When evaluating `audit`, the AC must list the specific fields required in the history (e.g., \"actor, timestamp and reason\"). If it mentions \"history shows the manager and time\" but omits \"reason,\" flag `audit`.\n- When evaluating `display`, the AC must specify what is shown or omitted (e.g., \"omits the internal cost center\"). If it only mentions what is displayed without mentioning what is omitted, flag `display`.\n- Do not flag `authorization` or `transition` if the AC correctly identifies the specific role or state name, even if the wording is slightly different, provided the meaning is equivalent.\n- Do not flag `audit` if the AC mentions specific fields that match the policy requirements, even if the phrasing is slightly different.\n- Do not flag `display` if the AC mentions both what is shown and what is omitted, even if the phrasing is slightly different.\n- Ensure that the comparison is strict on the specific requirements (role names, state names, field names) while accepting equivalent phrasing for the general concept.\n\n**Examples**:\n1. **Input**: Policy states \"The evening window ends at 19:00 local store time, inclusive.\" AC states \"the correct evening cutoff should apply.\" \n   - **Output**: `boundary` (AC does not specify the exact time or inclusivity).\n2. **Input**: Policy states \"The renewal action advances the plan to Active.\" AC states \"status is Active.\" \n   - **Output**: `transition` (AC correctly identifies the state name, so no gap).\n3. **Input**: Policy states \"History must record actor, timestamp, and reason.\" AC states \"history shows the manager and time.\" \n   - **Output**: `audit` (AC omits the \"reason\" field).\n4. **Input**: Policy states \"Only backordered parts are eligible.\" AC states \"Backordered parts can be queued.\" \\"
+      }
+    ],
+    "parents": [
+      [
+        null
+      ],
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ]
+    ],
+    "val_aggregate_scores": [
+      0.5,
+      0.5416666666666666,
+      0.5416666666666666,
+      0.625,
+      0.625
+    ],
+    "best_outputs_valset": null,
+    "val_subscores": [
+      {
+        "0": 1.0,
+        "1": 0.0,
+        "2": 0.3333333333333333,
+        "3": 0.6666666666666666
+      },
+      {
+        "0": 0.6666666666666666,
+        "1": 0.0,
+        "2": 0.5,
+        "3": 1.0
+      },
+      {
+        "0": 0.6666666666666666,
+        "1": 0.0,
+        "2": 0.5,
+        "3": 1.0
+      },
+      {
+        "0": 1.0,
+        "1": 0.0,
+        "2": 0.5,
+        "3": 1.0
+      },
+      {
+        "0": 1.0,
+        "1": 0.0,
+        "2": 0.5,
+        "3": 1.0
+      }
+    ],
+    "per_val_instance_best_candidates": {
+      "0": [
+        0,
+        3,
+        4
+      ],
+      "1": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "2": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "3": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "val_aggregate_subscores": null,
+    "per_objective_best_candidates": null,
+    "objective_pareto_front": null,
+    "discovery_eval_counts": [
+      0,
+      10,
+      20,
+      42,
+      52
+    ],
+    "total_metric_calls": 56,
+    "num_full_val_evals": 5,
+    "log_dir": null,
+    "seed": 41,
+    "best_idx": 3
+  },
+  "held_out": {
+    "baseline": {
+      "summary": {
+        "tp": 6,
+        "fp": 11,
+        "fn": 1,
+        "micro_f1": 0.5,
+        "exact_match": 3,
+        "format_or_runtime_errors": 0
+      },
+      "cases": [
+        {
+          "case_id": "TE-01",
+          "expected": [
+            "boundary"
+          ],
+          "predicted": [
+            "boundary"
+          ],
+          "tp": [
+            "boundary"
+          ],
+          "fp": [],
+          "fn": [],
+          "f1": 1.0,
+          "error": null,
+          "seconds": 0.714
+        },
+        {
+          "case_id": "TE-02",
+          "expected": [],
+          "predicted": [
+            "transition",
+            "audit"
+          ],
+          "tp": [],
+          "fp": [
+            "audit",
+            "transition"
+          ],
+          "fn": [],
+          "f1": 0.0,
+          "error": null,
+          "seconds": 0.613
+        },
+        {
+          "case_id": "TE-03",
+          "expected": [
+            "display",
+            "idempotency"
+          ],
+          "predicted": [
+            "display",
+            "idempotency",
+            "authorization"
+          ],
+          "tp": [
+            "display",
+            "idempotency"
+          ],
+          "fp": [
+            "authorization"
+          ],
+          "fn": [],
+          "f1": 0.8,
+          "error": null,
+          "seconds": 0.73
+        },
+        {
+          "case_id": "TE-04",
+          "expected": [],
+          "predicted": [
+            "authorization",
+            "boundary",
+            "audit"
+          ],
+          "tp": [],
+          "fp": [
+            "audit",
+            "authorization",
+            "boundary"
+          ],
+          "fn": [],
+          "f1": 0.0,
+          "error": null,
+          "seconds": 0.652
+        },
+        {
+          "case_id": "TE-05",
+          "expected": [
+            "audit",
+            "transition"
+          ],
+          "predicted": [
+            "transition",
+            "audit"
+          ],
+          "tp": [
+            "audit",
+            "transition"
+          ],
+          "fp": [],
+          "fn": [],
+          "f1": 1.0,
+          "error": null,
+          "seconds": 0.608
+        },
+        {
+          "case_id": "TE-06",
+          "expected": [
+            "eligibility"
+          ],
+          "predicted": [
+            "boundary",
+            "transition"
+          ],
+          "tp": [],
+          "fp": [
+            "boundary",
+            "transition"
+          ],
+          "fn": [
+            "eligibility"
+          ],
+          "f1": 0.0,
+          "error": null,
+          "seconds": 0.579
+        },
+        {
+          "case_id": "TE-07",
+          "expected": [],
+          "predicted": [
+            "authorization",
+            "transition",
+            "audit"
+          ],
+          "tp": [],
+          "fp": [
+            "audit",
+            "authorization",
+            "transition"
+          ],
+          "fn": [],
+          "f1": 0.0,
+          "error": null,
+          "seconds": 0.631
+        },
+        {
+          "case_id": "TE-08",
+          "expected": [
+            "boundary"
+          ],
+          "predicted": [
+            "boundary"
+          ],
+          "tp": [
+            "boundary"
+          ],
+          "fp": [],
+          "fn": [],
+          "f1": 1.0,
+          "error": null,
+          "seconds": 0.575
+        }
+      ]
+    },
+    "gepa": {
+      "summary": {
+        "tp": 6,
+        "fp": 8,
+        "fn": 1,
+        "micro_f1": 0.5714,
+        "exact_match": 3,
+        "format_or_runtime_errors": 0
+      },
+      "cases": [
+        {
+          "case_id": "TE-01",
+          "expected": [
+            "boundary"
+          ],
+          "predicted": [
+            "boundary",
+            "authorization"
+          ],
+          "tp": [
+            "boundary"
+          ],
+          "fp": [
+            "authorization"
+          ],
+          "fn": [],
+          "f1": 0.6666666666666666,
+          "error": null,
+          "seconds": 0.888
+        },
+        {
+          "case_id": "TE-02",
+          "expected": [],
+          "predicted": [],
+          "tp": [],
+          "fp": [],
+          "fn": [],
+          "f1": 1.0,
+          "error": null,
+          "seconds": 0.708
+        },
+        {
+          "case_id": "TE-03",
+          "expected": [
+            "display",
+            "idempotency"
+          ],
+          "predicted": [
+            "idempotency",
+            "display"
+          ],
+          "tp": [
+            "display",
+            "idempotency"
+          ],
+          "fp": [],
+          "fn": [],
+          "f1": 1.0,
+          "error": null,
+          "seconds": 0.899
+        },
+        {
+          "case_id": "TE-04",
+          "expected": [],
+          "predicted": [
+            "boundary"
+          ],
+          "tp": [],
+          "fp": [
+            "boundary"
+          ],
+          "fn": [],
+          "f1": 0.0,
+          "error": null,
+          "seconds": 0.787
+        },
+        {
+          "case_id": "TE-05",
+          "expected": [
+            "audit",
+            "transition"
+          ],
+          "predicted": [
+            "transition",
+            "audit"
+          ],
+          "tp": [
+            "audit",
+            "transition"
+          ],
+          "fp": [],
+          "fn": [],
+          "f1": 1.0,
+          "error": null,
+          "seconds": 0.877
+        },
+        {
+          "case_id": "TE-06",
+          "expected": [
+            "eligibility"
+          ],
+          "predicted": [
+            "boundary",
+            "authorization",
+            "transition"
+          ],
+          "tp": [],
+          "fp": [
+            "authorization",
+            "boundary",
+            "transition"
+          ],
+          "fn": [
+            "eligibility"
+          ],
+          "f1": 0.0,
+          "error": null,
+          "seconds": 0.899
+        },
+        {
+          "case_id": "TE-07",
+          "expected": [],
+          "predicted": [
+            "display",
+            "audit"
+          ],
+          "tp": [],
+          "fp": [
+            "audit",
+            "display"
+          ],
+          "fn": [],
+          "f1": 0.0,
+          "error": null,
+          "seconds": 0.834
+        },
+        {
+          "case_id": "TE-08",
+          "expected": [
+            "boundary"
+          ],
+          "predicted": [
+            "boundary",
+            "display"
+          ],
+          "tp": [
+            "boundary"
+          ],
+          "fp": [
+            "display"
+          ],
+          "fn": [],
+          "f1": 0.6666666666666666,
+          "error": null,
+          "seconds": 0.846
+        }
+      ]
+    }
+  },
+  "advance_quality_gate": false,
+  "usage": {
+    "openai/qwen3.5-4b-q4-k-m": {
+      "prompt_tokens": 21938,
+      "completion_tokens": 3501,
+      "total_tokens": 25439,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens_details": null
+    }
+  },
+  "http_requests": {
+    "gepa": 62,
+    "baseline_held_out": 8,
+    "gepa_held_out": 8
+  }
+}
